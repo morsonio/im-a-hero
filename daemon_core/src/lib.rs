@@ -6,6 +6,11 @@ use jni::objects::{JClass, JString};
 use jni::sys::jstring;
 use log::{error, info};
 use std::panic;
+use jni::JNIEnv;
+use jni::objects::JClass;
+use jni::sys::{jboolean, jfloat, jint};
+use std::sync::atomic::{AtomicI32, Ordering};
+
 
 /// This initializes the Rust panic hook and Android logger correctly.
 /// This should be called exactly once from the Android application main activity startup.
@@ -56,4 +61,57 @@ pub extern "system" fn Java_com_im_a_hero_daemon_DaemonCore_analyzeTelemetry(
             env.new_string("ERROR_OOM").unwrap().into_raw()
         }
     }
+
+// Bezpieczny globalny stan (Threat Level)
+static FRUSTRATION_LEVEL: AtomicI32 = AtomicI32::new(0);
+const FRUSTRATION_THRESHOLD: i32 = 100;
+
+#[no_mangle]
+pub extern "system" fn Java_com_hero_TelemetryService_analyzeTouch(
+    mut env: JNIEnv,
+    _class: JClass,
+    _x: jint,
+    _y: jint,
+    pressure: jfloat,
+    velocity: jfloat,
+) -> jboolean {
+    
+    // Pobieramy aktualny stan wkurzenia
+    let mut current_frustration = FRUSTRATION_LEVEL.load(Ordering::Relaxed);
+
+    // Heurystyka: Zbyt mocny nacisk + szybki ruch palca (doomscrolling / wściekłe tapnięcia)
+    if pressure > 1.5 && velocity > 1000.0 {
+        current_frustration += 15;
+    } else if current_frustration > 0 {
+        // Chłodzenie systemu, gdy użytkownik się uspokaja
+        current_frustration -= 1;
+    }
+
+    // Zapisujemy nowy stan
+    FRUSTRATION_LEVEL.store(current_frustration, Ordering::Relaxed);
+
+    // Jeśli przebiliśmy sufit tolerancji – odpalamy protokół "The Hijack"
+    if current_frustration >= FRUSTRATION_THRESHOLD {
+        
+        // Reset licznika przed uderzeniem
+        FRUSTRATION_LEVEL.store(0, Ordering::Relaxed);
+
+        // Zlecenie do Androida (Kotlina): Odpal asymetryczną wibrację i psuj ekran!
+        // Wywołujemy metodę 'triggerAnomalyVibration' zdefiniowaną w klasie Javy/Kotlina
+        let callback_result = env.call_method(
+            &_class,
+            "triggerAnomalyVibration",
+            "()V", // Sygnatura metody: (brak argumentów) -> Void
+            &[],
+        );
+
+        if let Err(e) = callback_result {
+            println!("Rust Error: Nie udalo sie wywolac callbacku w Kotlinie: {:?}", e);
+        }
+
+        return true as jboolean;
+    }
+
+    false as jboolean
+}
 }
