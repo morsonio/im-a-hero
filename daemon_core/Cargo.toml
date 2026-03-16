@@ -1,0 +1,16 @@
+[package]
+name = "daemon_core"
+version = "0.1.0"
+edition = "2021"
+description = "Node Zero microscopic background daemon"
+authors = ["Team Bravo <dev@im-a-hero.org>"]
+
+[lib]
+crate-type = ["cdylib"]
+name = "daemon_core"
+
+[dependencies]
+jni = "0.21.1" # Standard Java Native Interface bindings
+log = "0.4"
+android_logger = "0.13" # Directs Rust `log` macros output straight to Android LogCat
+anyhow = "1.0" # Elegant error handling
