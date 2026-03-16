@@ -2,7 +2,7 @@
 #![allow(non_snake_case)]
 
 use jni::JNIEnv;
-use jni::objects::{JClass, JString};
+use jni::objects::{JClass, JObject, JString};
 use jni::sys::jstring;
 use log::{error, info};
 use std::panic;
@@ -13,7 +13,7 @@ use std::sync::atomic::{AtomicI32, Ordering};
 /// This initializes the Rust panic hook and Android logger correctly.
 /// This should be called exactly once from the Android application main activity startup.
 #[no_mangle]
-pub extern "system" fn Java_com_im_a_hero_daemon_DaemonCore_init(
+pub extern "system" fn Java_com_hero_TelemetryService_initCore(
     mut _env: JNIEnv,
     _class: JClass,
 ) {
@@ -68,7 +68,7 @@ const FRUSTRATION_THRESHOLD: i32 = 100;
 #[no_mangle]
 pub extern "system" fn Java_com_hero_TelemetryService_analyzeTouch(
     mut env: JNIEnv,
-    _class: JClass,
+    _this: JObject,
     _x: jint,
     _y: jint,
     pressure: jfloat,
@@ -98,7 +98,7 @@ pub extern "system" fn Java_com_hero_TelemetryService_analyzeTouch(
         // Zlecenie do Androida (Kotlina): Odpal asymetryczną wibrację i psuj ekran!
         // Wywołujemy metodę 'triggerAnomalyVibration' zdefiniowaną w klasie Javy/Kotlina
         let callback_result = env.call_method(
-            &_class,
+            &_this,
             "triggerAnomalyVibration",
             "()V", // Sygnatura metody: (brak argumentów) -> Void
             &[],

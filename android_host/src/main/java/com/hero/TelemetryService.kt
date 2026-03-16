@@ -1,103 +1,104 @@
-package com.hero
+package com.im_a_hero.daemon
 
 import android.accessibilityservice.AccessibilityService
-import android.content.Context
 import android.graphics.PixelFormat
-import android.os.VibrationEffect
-import android.os.Vibrator
-import android.util.Log
-import android.view.Gravity
+import android.os.Handler
+import android.os.Looper
 import android.view.WindowManager
 import android.view.accessibility.AccessibilityEvent
+import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.util.Log
 
 class TelemetryService : AccessibilityService() {
 
-    // Most dla naszego dynamicznego DOM-u
-    inner class WebAppInterface {
-        @android.webkit.JavascriptInterface
-        fun closeTerminal() {
-            Log.w("HERO_NODE_ZERO", "Operator 011 podjął decyzję. Zdejmuję nakładkę.")
-            // Musimy to odpalić na głównym wątku UI
-            android.os.Handler(android.os.Looper.getMainLooper()).post {
-                removeHijack()
+    private lateinit var windowManager: WindowManager
+    private var terminalView: WebView? = null
+    private var isHijacked = false
+
+    // Zmienne Radaru Frustracji
+    private var actionCount = 0
+    private var lastActionTime = 0L
+    private val FRUSTRATION_LIMIT = 15 // Ile wściekłych akcji odpala BUM
+    private val TIME_WINDOW = 3000L // W jakim czasie (3 sekundy)
+
+    override fun onServiceConnected() {
+        super.onServiceConnected()
+        windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
+        Log.i("HERO_NODE", "Demon nasłuchuje w cieniu...")
+    }
+
+    override fun onAccessibilityEvent(event: AccessibilityEvent?) {
+        if (event == null || isHijacked) return
+
+        val eventType = event.eventType
+        
+        // Interesują nas tylko kliknięcia i scrolle
+        if (eventType == AccessibilityEvent.TYPE_VIEW_CLICKED || eventType == AccessibilityEvent.TYPE_VIEW_SCROLLED) {
+            val currentTime = System.currentTimeMillis()
+
+            // Jeśli minęło za dużo czasu od ostatniej akcji, resetujemy licznik
+            if (currentTime - lastActionTime > TIME_WINDOW) {
+                actionCount = 0
+            }
+
+            actionCount++
+            lastActionTime = currentTime
+
+            Log.d("HERO_NODE", "Poziom frustracji: $actionCount / $FRUSTRATION_LIMIT")
+
+            // Próg przekroczony -> Odpalamy The Hijack!
+            if (actionCount >= FRUSTRATION_LIMIT) {
+                actionCount = 0 // Reset
+                triggerTheHijack()
             }
         }
     }
 
-    private var windowManager: WindowManager? = null
-    private var terminalView: WebView? = null
+    private fun triggerTheHijack() {
+        if (isHijacked) return
+        isHijacked = true
+        Log.w("HERO_NODE", "BUM! Przejmuję ekran.")
 
-    companion object {
-        init {
-            System.loadLibrary("hero_core")
-        }
-    }
+        // Parametry nakładki (OVERLAY) rysowanej nad innymi aplikacjami
+        WebView.setWebContentsDebuggingEnabled(true)
 
-    external fun analyzeTouch(x: Int, y: Int, pressure: Float, velocity: Float): Boolean
-
-    override fun onServiceConnected() {
-        super.onServiceConnected()
-        windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
-    }
-
-    override fun onAccessibilityEvent(event: AccessibilityEvent?) {
-        if (event == null) return
-
-        // Telemetria (PoC)
-        val simulatedPressure = 1.6f
-        val simulatedVelocity = 1200.0f
-
-        val triggerGlitch = analyzeTouch(0, 0, simulatedPressure, simulatedVelocity)
-
-        // Odpalamy prawdziwą nakładkę, a nie Activity!
-        if (triggerGlitch && terminalView == null) {
-            Log.w("HERO_NODE_ZERO", "Próg przekroczony. Wstrzykuję nakładkę!")
-            executeTheHijack()
-        }
-    }
-
-    private fun executeTheHijack() {
-        // Konfiguracja nakładki (SYSTEM_ALERT_WINDOW)
         val params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.MATCH_PARENT,
-            // TYPE_APPLICATION_OVERLAY - to jest to, co stawia nas ponad innymi apkami
-            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY, 
-            // Brak FLAG_NOT_FOCUSABLE oznacza, że WebView przechwytuje cały dotyk
-            WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
-            PixelFormat.TRANSLUCENT
+            WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY, // Wymaga uprawnień, ale daje pełną władzę
+            WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, // Pozwala pisać na klawiaturze w terminalu
+            PixelFormat.OPAQUE
         )
-        params.gravity = Gravity.TOP or Gravity.START
 
-        // Tworzymy frontend w locie
-        terminalView = WebView(this).apply {
-            settings.javaScriptEnabled = true
-            settings.domStorageEnabled = true
-            
-            // WSTRZYKUJEMY MOST! W JavaScripcie będzie widoczny jako obiekt 'AndroidBridge'
-            addJavascriptInterface(WebAppInterface(), "AndroidBridge")
-            
-            webViewClient = WebViewClient()
-            loadUrl("file:///android_asset/index.html")
+        // Tworzymy na żywo przeglądarkę i wstrzykujemy jej nasz kod
+        Handler(Looper.getMainLooper()).post {
+            terminalView = WebView(this).apply {
+                settings.javaScriptEnabled = true
+                settings.domStorageEnabled = true
+                addJavascriptInterface(WebAppInterface(), "AndroidBridge")
+                webViewClient = WebViewClient()
+                loadUrl("file:///android_asset/index.html")
+            }
+            windowManager.addView(terminalView, params)
         }
-
-        // Brutalny wjazd na ekran
-        windowManager?.addView(terminalView, params)
     }
 
-    // Ta funkcja będzie potrzebna frontendowi, żeby móc zamknąć nakładkę (powrót do reala)
-    fun removeHijack() {
-        terminalView?.let {
-            windowManager?.removeView(it)
-            terminalView = null
+    // Ten interfejs jest widoczny w JS-ie Twojego terminala!
+    inner class WebAppInterface {
+        @JavascriptInterface
+        fun closeTerminal() {
+            Log.i("HERO_NODE", "Zagadka rozwiązana. Zdejmuję blokadę.")
+            Handler(Looper.getMainLooper()).post {
+                terminalView?.let {
+                    windowManager.removeView(it)
+                    terminalView = null
+                    isHijacked = false
+                }
+            }
         }
     }
 
     override fun onInterrupt() {}
-
-    fun triggerAnomalyVibration() {
-        // ... (kod wibracji pozostaje bez zmian)
-    }
 }
