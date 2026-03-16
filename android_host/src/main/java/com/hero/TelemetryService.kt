@@ -10,6 +10,9 @@ import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.util.Log
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.content.Context
 
 class TelemetryService : AccessibilityService() {
 
@@ -20,7 +23,7 @@ class TelemetryService : AccessibilityService() {
     // Zmienne Radaru Frustracji
     private var actionCount = 0
     private var lastActionTime = 0L
-    private val FRUSTRATION_LIMIT = 15 // Ile wściekłych akcji odpala BUM
+    private val FRUSTRATION_LIMIT = 30 // Ile wściekłych akcji odpala BUM
     private val TIME_WINDOW = 3000L // W jakim czasie (3 sekundy)
 
     override fun onServiceConnected() {
@@ -59,20 +62,28 @@ class TelemetryService : AccessibilityService() {
     private fun triggerTheHijack() {
         if (isHijacked) return
         isHijacked = true
-        Log.w("HERO_NODE", "BUM! Przejmuję ekran.")
+        Log.w("HERO_NODE", "OVERRIDE TRIGGERED. Launching terminal overlay.")
 
-        // Parametry nakładki (OVERLAY) rysowanej nad innymi aplikacjami
+        // 1. FIRE HAPTIC FEEDBACK (Physical shock to break the habit loop)
+        val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        if (vibrator.hasVibrator()) {
+            // Vibrate for 500ms for a strong, sudden impact
+            vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
+        }
+
+        // 2. ENABLE DEBUGGING (For Chrome inspect if needed)
         WebView.setWebContentsDebuggingEnabled(true)
 
+        // 3. SET OVERLAY PARAMETERS
         val params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.MATCH_PARENT,
-            WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY, // Wymaga uprawnień, ale daje pełną władzę
-            WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, // Pozwala pisać na klawiaturze w terminalu
+            WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY,
+            WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
             PixelFormat.OPAQUE
         )
 
-        // Tworzymy na żywo przeglądarkę i wstrzykujemy jej nasz kod
+        // 4. INJECT WEBVIEW
         Handler(Looper.getMainLooper()).post {
             terminalView = WebView(this).apply {
                 settings.javaScriptEnabled = true

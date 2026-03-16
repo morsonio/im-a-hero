@@ -1,0 +1,195 @@
+:root {
+    --term-green: #0f0;
+    --term-bg: #050505;
+}
+
+body {
+    background-color: var(--term-bg);
+    color: var(--term-green);
+    font-family: 'Courier New', Courier, monospace;
+    margin: 0;
+    padding: 20px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    /* Allow scrolling when keyboard pushes content */
+    display: flex;
+    flex-direction: column;
+    /* Use dvh (dynamic viewport height) to adapt when virtual keyboard appears */
+    min-height: 100dvh;
+    box-sizing: border-box;
+}
+
+/* CRT monitor scanline effect */
+body::after {
+    content: " ";
+    display: block;
+    position: fixed;
+    /* Fixed to cover the whole screen regardless of scroll */
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    z-index: 2;
+    background-size: 100% 2px, 3px 100%;
+    pointer-events: none;
+}
+
+#output {
+    flex-grow: 1;
+    font-size: 1.2rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    text-shadow: 0 0 5px var(--term-green);
+    margin-bottom: 20px;
+    /* Space above input */
+}
+
+/* Input area styling */
+#input-line {
+    display: flex;
+    font-size: 1.2rem;
+    text-shadow: 0 0 5px var(--term-green);
+    margin-bottom: 10px;
+}
+
+#user-input {
+    flex-grow: 1;
+    background: transparent;
+    border: none;
+    color: var(--term-green);
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.2rem;
+    outline: none;
+    margin-left: 10px;
+    text-shadow: 0 0 5px var(--term-green);
+}
+
+.cursor {
+    display: inline-block;
+    width: 10px;
+    height: 1.2rem;
+    background-color: var(--term-green);
+    animation: blink 1s step-end infinite;
+    vertical-align: bottom;
+}
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+/* Micro-glitch animation on boot */
+.glitch-active {
+    animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+    transform: translate3d(0, 0, 0);
+}
+
+@keyframes shake {
+
+    10%,
+    90% {
+        transform: translate3d(-1px, 0, 0);
+    }
+
+    20%,
+    80% {
+        transform: translate3d(2px, 0, 0);
+    }
+
+    30%,
+    50%,
+    70% {
+        transform: translate3d(-4px, 0, 0);
+    }
+
+    40%,
+    60% {
+        transform: translate3d(4px, 0, 0);
+    }
+}
+
+/* --- INTERFEJS AWARYJNY (BANDERSTNATCH) --- */
+
+#choices {
+    margin: 15px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.term-btn {
+    background: transparent;
+    color: var(--term-green);
+    border: 1px solid var(--term-green);
+    padding: 10px 15px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.1rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    text-align: left;
+    transition: all 0.1s;
+}
+
+.term-btn:active,
+.term-btn:hover {
+    background: var(--term-green);
+    color: var(--term-bg);
+}
+
+/* Specjalny suwak tekstowy (Skala 1-5) */
+.term-scale {
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid var(--term-green);
+    padding: 5px;
+    margin: 10px 0;
+}
+
+.scale-tick {
+    padding: 10px;
+    cursor: pointer;
+    text-align: center;
+    flex-grow: 1;
+}
+
+.scale-tick:active {
+    background: var(--term-green);
+    color: var(--term-bg);
+}
+
+/* Animacja kary za kłamstwo (MMPI) */
+.fatal-error {
+    color: #ff0000 !important;
+    text-shadow: 2px 0 #0000ff, -2px 0 #00ff00;
+    animation: fatal-glitch 0.1s linear infinite;
+    font-weight: bold;
+}
+
+@keyframes fatal-glitch {
+    0% {
+        transform: translate(0)
+    }
+
+    20% {
+        transform: translate(-3px, 3px)
+    }
+
+    40% {
+        transform: translate(-3px, -3px)
+    }
+
+    60% {
+        transform: translate(3px, 3px)
+    }
+
+    80% {
+        transform: translate(3px, -3px)
+    }
+
+    100% {
+        transform: translate(0)
+    }
+}
