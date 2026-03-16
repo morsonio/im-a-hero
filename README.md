@@ -1,53 +1,53 @@
-# 🛡️ Projekt: I'm a Hero (Węzeł Zero)
+# 🛡️ Project: I'm a Hero (Node Zero)
 
-## 🚀 Manifest Operacyjny
-Algorytmy social mediów to Pudełka Skinnera na sterydach. Zostały zaprojektowane przez inżynierów z Doliny Krzemowej, by przejąć układy nagrody naszych dzieci za pomocą taniej dopaminy. Ten projekt to asymetryczna odpowiedź rodziców-inżynierów. [cite_start]Tworzymy aplikację "I'm a Hero" skupiającą się na "Role playing life"[cite: 2].
+## 🚀 Operational Manifesto
+Social media algorithms are Skinner Boxes on steroids. They were designed by the best engineers in Silicon Valley to hijack our children's reward systems using cheap dopamine. This project is a digital exoskeleton and an asymmetric response from engineer-parents. We are building "I'm a Hero" focusing on "Role playing life."
 
-Nie blokujemy urządzeń – **przejmujemy nad nimi kontrolę.** Hakujemy system nagród u podstaw, inspirując się psychologią behawioralną i popularyzatorami nauki (kłania się tu podejście Scifuna i Dawida Bombowca). [cite_start]Używamy techniki "White-Hat Dark Patterns"[cite: 127], by wyrwać użytkownika z pętli doomscrollingu i zmusić jego korę przedczołową do pracy. [cite_start]Budujemy rezyliencję, opierając się na fizycznej zmianie struktury mózgu, czyli neuroplastyczności[cite: 6].
-
----
-
-## 🎭 PoC: Węzeł Pierwszy (The First Contact & Profiling)
-Pierwsze zderzenie użytkownika z Węzłem (Terminalem) to wyreżyserowany szok poznawczy, oparty na szacunku do jego inteligencji.
-
-### 1. Easter Eggy i "Druga Strona" (The Hook)
-Dla naszego głównego Beta Testera (Operator 011) system wplata kanon *Stranger Things*, uruchamiając się jak awaryjny protokół uderzeniowy:
-* [cite_start]Terminal wita użytkownika komunikatem: "Skanowanie biometryczne... Zgodność: OBIEKT 011"[cite: 626].
-* [cite_start]Informujemy, że to "Algorytmy z Drugiej Strony (The Upside Down)" próbują przejąć układ nagrody[cite: 627].
-* [cite_start]Wyjaśniamy, że zewnętrzny "Łupieżca Umysłów (Mind Flayer)" hoduje uwagę rówieśników jak farmę baterii[cite: 628].
-
-### 2. Kompilacja Awatara: Profilowanie bez Oceniania
-Użytkownik, jako Inżynier Własnego Umysłu, określa swoje "Ja Realne" (obecne reakcje na stres, np. tryb awaryjny czy przegrzanie procesora) i "Ja Idealne" (kim chce być docelowo – np. Architektem budującym na błędach, czy Duchem panującym nad emocjami). Rozdźwięk między tymi stanami to oś fabularna aplikacji.
+We don't just block devices – **we take control.** We hack the reward system at its core, drawing inspiration from behavioral psychology and science communicators like Scifun and Dawid Bombowiec. We use "White-Hat Dark Patterns" to rip the user out of the doomscrolling loop and force their prefrontal cortex to do the heavy lifting (Proof of Work). We build resilience based on actual physical changes in brain structure (neuroplasticity).
 
 ---
 
-## 🎲 Silnik "Bandersnatch" i Bezpieczna Przystań
-[cite_start]Zamiast sztywnych zasad, implementujemy mechanikę interaktywnego "Bandersnatcha" (Choose Your Own Adventure)[cite: 378]. [cite_start]Codzienne reakcje użytkownika przesuwają go na matrycy charakteru, np. na osi od Prawa (Lawful) do Chaosu/Hackowania (Chaotic)[cite: 385]. Aplikacja nie ocenia – ona odpowiada na wybory, kształtując świat gry.
+## 🎭 PoC: Node One (The First Contact & Profiling)
+The user's first collision with the Node (The Terminal) is a carefully orchestrated cognitive shock, built on absolute respect for their intelligence.
 
-System wie, że rozwój bywa bolesny:
-* **Kuźnia (Alchemia Błędu):** Błąd to surowiec. [cite_start]Nagradzamy za "przyniesienie go do Kuźni" i wyciągnięcie wniosków, aktualizując oprogramowanie mózgu o nową łatkę[cite: 108].
-* **Tryb Ogniska (Campfire Mode):** Na fatalny dzień i przeciążenie. [cite_start]Aplikacja zdejmuje wyzwania, znikają nagrody, a system pozwala po prostu odpocząć i zregenerować HP[cite: 99].
+### 1. Easter Eggs and "The Upside Down" (The Hook)
+For our main Beta Tester (Operator 011), the system weaves in *Stranger Things* lore, launching like an emergency override protocol:
+* The Terminal greets the user: "Biometric scan... Match: SUBJECT 011."
+* We inform them that "Algorithms from The Upside Down" are attempting to hijack their reward system.
+* We explain that the external "Mind Flayer" is farming their peers' attention like batteries.
+
+### 2. Avatar Compilation: Profiling Without Judgment
+The user, acting as the Chief Engineer of their own mind, defines their "Real Self" (current stress reactions, e.g., 'Safe Mode' or 'CPU Overheating') and their "Ideal Self" (who they want to become – e.g., an Architect who builds on errors, or a Ghost who controls emotions). The gap between these two states is the core storyline of the app.
 
 ---
 
-## 🏗️ Architektura Systemu (Monorepo)
-Projekt to hybrydowy Koń Trojański. Składa się z 4 modułów działających na styku bezpiecznej pamięci, natywnego API Androida i zewnętrznych serwerów.
+## 🎲 The "Bandersnatch" Engine & Safe Haven
+Instead of rigid rules, we implement an interactive "Bandersnatch" (Choose Your Own Adventure) mechanic. The user's daily reactions push them along an alignment matrix, e.g., from Lawful to Chaotic (Hacker). The app doesn't judge – it responds to choices, shaping the game world.
+
+The system knows that growth hurts:
+* **The Forge (Alchemy of Mistakes):** A mistake is raw material. We reward the user for "bringing it to the Forge," analyzing it, and updating their brain's software with a new patch.
+* **Campfire Mode:** For terrible days and system overloads. The app removes challenges, hides rewards, and simply lets the user rest and regenerate HP.
+
+---
+
+## 🏗️ System Architecture (Monorepo)
+This project is a hybrid Trojan Horse. It consists of 4 modules operating at the intersection of memory safety, native Android APIs, and external servers.
 
 ### 1. `daemon_core` (Rust / JNI / NDK)
-Mikroskopijny demon działający w tle. Omija GC Javy. Nasłuchuje surowej telemetrii z szyny czujników, wykrywając momenty frustracji. Generuje mikro-anomalie haptyczne i wizualne, by zdestabilizować środowisko "Pasożytów".
+A microscopic background daemon. Bypasses Java's GC. Listens to raw telemetry from the sensor bus (accelerometer, touch velocity) to detect moments of frustration ("boiling frog" syndrome). Generates micro-anomalies (haptic and visual glitches) to destabilize the "Parasite" environment.
 
 ### 2. `android_host` (Kotlin / Android API)
-Nasz Węzeł Zero. Aplikacja z fizycznie nadanymi pełnymi uprawnieniami (Full Access). Używa `AccessibilityService` i `SYSTEM_ALERT_WINDOW` do bezwzględnego przejęcia ekranu (The Hijack) w momencie uruchomienia algorytmów kradnących czas.
+Our Node Zero. An app with physically granted Full Access via ADB. Uses `AccessibilityService` and `SYSTEM_ALERT_WINDOW` to ruthlessly take over the screen (The Hijack) the moment time-stealing algorithms are launched.
 
 ### 3. `terminal_ui` (TypeScript / HTML / CSS)
-Zglitchowany, cyberpunkowy interfejs webowy osadzony w aplikacji. Oddaje sprawczość w ręce nastolatka, pozwalając na interakcję z silnikiem drzew decyzyjnych.
+A glitched, cyberpunk web interface embedded in the app. Hands agency back to the teenager, allowing interaction with the decision-tree engine.
 
 ### 4. `rcon_bridge` (.NET / C#)
-Most między światem realnym a wirtualnym. [cite_start]Sukcesy zgłoszone w Terminalu sprawiają, że backend łączy się przez RCON z serwerem Minecrafta[cite: 513]. [cite_start]System pozwala na zdalne egzekwowanie eventów w grze (np. błyskawice, wsparcie dla drużyny) u wszystkich podłączonych graczy[cite: 536, 537].
+The bridge between the real and virtual worlds. Successes reported in the Terminal prompt the backend to connect via RCON to a Minecraft Java server. The system executes remote in-game events (e.g., lightning strikes, dropping rare loot, removing shields from custom bosses) for all connected players.
 
 ---
 
-## 🤝 Kontrybucja (Team Bravo)
-Szukamy inżynierów, którzy potrafią tworzyć własne, skrojone pod taska wzorce projektowe. [cite_start]Potrzebujemy weteranów .NET, WPF, TypeScript, HTML i CSS[cite: 589]. Wspólnie budujemy środowisko, zamykając asymetryczną odpowiedź w czystym kodzie.
+## 🤝 Contributing (Team Bravo)
+We are looking for engineers who aren't afraid to craft custom design patterns tailored to the task. We need veterans of .NET, WPF, TypeScript, HTML, and CSS. Together, we are building an environment that encapsulates an asymmetric response in clean code.
 
 *Wake up. The matrix has your kids. Let's get them back.*
