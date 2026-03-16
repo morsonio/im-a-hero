@@ -1,0 +1,47 @@
+# =========================
+# GENERAL (IDE & OS)
+# =========================
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+*.log
+*.swp
+
+# =========================
+# 1. RUST (daemon_core)
+# =========================
+/daemon_core/target/
+**/*.rs.bk
+# Leaving Cargo.lock alone for now
+
+# =========================
+# 2. FRONTEND (terminal_ui)
+# =========================
+/terminal_ui/node_modules/
+/terminal_ui/dist/
+/terminal_ui/.env
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# =========================
+# 3. ANDROID (android_host)
+# =========================
+/android_host/build/
+/android_host/.gradle/
+/android_host/local.properties
+/android_host/.cxx/
+/android_host/*.iml
+# Ignoring compiled Rust binaries (.so) to keep the repo lean.
+# Devs compile Rust locally before running the app.
+/android_host/src/main/jniLibs/
+
+# =========================
+# 4. .NET (rcon_bridge)
+# =========================
+/rcon_bridge/bin/
+/rcon_bridge/obj/
+/rcon_bridge/.vs/
+/rcon_bridge/*.user
+/rcon_bridge/*.suo
