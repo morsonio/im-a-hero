@@ -6,8 +6,6 @@ use jni::objects::{JClass, JString};
 use jni::sys::jstring;
 use log::{error, info};
 use std::panic;
-use jni::JNIEnv;
-use jni::objects::JClass;
 use jni::sys::{jboolean, jfloat, jint};
 use std::sync::atomic::{AtomicI32, Ordering};
 
@@ -36,7 +34,7 @@ pub extern "system" fn Java_com_im_a_hero_daemon_DaemonCore_init(
 
 /// A sample telemetry input interface. Shows string passing back and forth cleanly.
 #[no_mangle]
-pub extern "system" fn Java_com_im_a_hero_daemon_DaemonCore_analyzeTelemetry(
+pub extern "system" fn analyzeTelemetry(
     mut env: JNIEnv,
     _class: JClass,
     input: JString,
@@ -53,14 +51,15 @@ pub extern "system" fn Java_com_im_a_hero_daemon_DaemonCore_analyzeTelemetry(
     
     // Core engine logic
     let analysis_result = format!("PROCESSED_OK: [{}]", input_str);
-    
+
     match env.new_string(analysis_result) {
-        Ok(j_str) => j_str.into_raw(),
+        Ok(j_str) => return j_str.into_raw(), // <--- dodaj return
         Err(e) => {
             error!("Failed to allocate new JString for JVM: {}", e);
-            env.new_string("ERROR_OOM").unwrap().into_raw()
+            return env.new_string("ERROR_OOM").unwrap().into_raw(); // <--- dodaj return i średnik tutaj jest OK, bo blok się kończy
         }
     }
+}
 
 // Bezpieczny globalny stan (Threat Level)
 static FRUSTRATION_LEVEL: AtomicI32 = AtomicI32::new(0);
@@ -113,5 +112,4 @@ pub extern "system" fn Java_com_hero_TelemetryService_analyzeTouch(
     }
 
     false as jboolean
-}
 }

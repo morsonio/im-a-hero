@@ -2,62 +2,102 @@ package com.hero
 
 import android.accessibilityservice.AccessibilityService
 import android.content.Context
+import android.graphics.PixelFormat
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.Log
+import android.view.Gravity
+import android.view.WindowManager
 import android.view.accessibility.AccessibilityEvent
+import android.webkit.WebView
+import android.webkit.WebViewClient
 
 class TelemetryService : AccessibilityService() {
 
+    // Most dla naszego dynamicznego DOM-u
+    inner class WebAppInterface {
+        @android.webkit.JavascriptInterface
+        fun closeTerminal() {
+            Log.w("HERO_NODE_ZERO", "Operator 011 podjął decyzję. Zdejmuję nakładkę.")
+            // Musimy to odpalić na głównym wątku UI
+            android.os.Handler(android.os.Looper.getMainLooper()).post {
+                removeHijack()
+            }
+        }
+    }
+
+    private var windowManager: WindowManager? = null
+    private var terminalView: WebView? = null
+
     companion object {
-        // Ładujemy naszą skompilowaną bibliotekę z Rusta.
-        // Nazwa musi pasować do "libname" z Cargo.toml (hero_core)
         init {
             System.loadLibrary("hero_core")
         }
     }
 
-    // Deklaracja natywnej funkcji z Rusta (nasze JNI)
     external fun analyzeTouch(x: Int, y: Int, pressure: Float, velocity: Float): Boolean
 
-    // To jest główna pętla nasłuchująca Androida
+    override fun onServiceConnected() {
+        super.onServiceConnected()
+        windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+    }
+
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if (event == null) return
 
-        // W pełnej wersji (przyznane uprawnienia Full Access) 
-        // wyciągamy tutaj fizyczne dane z ekranu/ruchu.
-        // Na potrzeby PoC załóżmy, że mamy strumień danych:
+        // Telemetria (PoC)
         val simulatedPressure = 1.6f
         val simulatedVelocity = 1200.0f
 
-        // Przekazujemy dane do Rusta!
         val triggerGlitch = analyzeTouch(0, 0, simulatedPressure, simulatedVelocity)
 
-        if (triggerGlitch) {
-            Log.w("HERO_NODE_ZERO", "Rust zadecydował: Próg frustracji przekroczony!")
-            // Tutaj w przyszłości wstrzykniemy nasz Terminal UI (SYSTEM_ALERT_WINDOW)
+        // Odpalamy prawdziwą nakładkę, a nie Activity!
+        if (triggerGlitch && terminalView == null) {
+            Log.w("HERO_NODE_ZERO", "Próg przekroczony. Wstrzykuję nakładkę!")
+            executeTheHijack()
         }
     }
 
-    override fun onInterrupt() {
-        Log.e("HERO_NODE_ZERO", "Usługa została przerwana przez system.")
-    }
+    private fun executeTheHijack() {
+        // Konfiguracja nakładki (SYSTEM_ALERT_WINDOW)
+        val params = WindowManager.LayoutParams(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.MATCH_PARENT,
+            // TYPE_APPLICATION_OVERLAY - to jest to, co stawia nas ponad innymi apkami
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY, 
+            // Brak FLAG_NOT_FOCUSABLE oznacza, że WebView przechwytuje cały dotyk
+            WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
+            PixelFormat.TRANSLUCENT
+        )
+        params.gravity = Gravity.TOP or Gravity.START
 
-    // =========================================================
-    // CALLBACK DLA RUSTA: Tu uderza JNI, gdy "żaba się ugotuje"
-    // =========================================================
-    fun triggerAnomalyVibration() {
-        Log.e("HERO_NODE_ZERO", "Sygnał z Rusta: Uruchamiam anomalię haptyczną!")
-        
-        val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        
-        if (vibrator.hasVibrator()) {
-            // Nasz asymetryczny wodotrysk: [start natychmiast, krótki strzał, cisza, długie rzężenie]
-            val timings = longArrayOf(0, 15, 50, 250)
-            val amplitudes = intArrayOf(0, 255, 0, 80)
+        // Tworzymy frontend w locie
+        terminalView = WebView(this).apply {
+            settings.javaScriptEnabled = true
+            settings.domStorageEnabled = true
             
-            val effect = VibrationEffect.createWaveform(timings, amplitudes, -1)
-            vibrator.vibrate(effect)
+            // WSTRZYKUJEMY MOST! W JavaScripcie będzie widoczny jako obiekt 'AndroidBridge'
+            addJavascriptInterface(WebAppInterface(), "AndroidBridge")
+            
+            webViewClient = WebViewClient()
+            loadUrl("file:///android_asset/index.html")
         }
+
+        // Brutalny wjazd na ekran
+        windowManager?.addView(terminalView, params)
+    }
+
+    // Ta funkcja będzie potrzebna frontendowi, żeby móc zamknąć nakładkę (powrót do reala)
+    fun removeHijack() {
+        terminalView?.let {
+            windowManager?.removeView(it)
+            terminalView = null
+        }
+    }
+
+    override fun onInterrupt() {}
+
+    fun triggerAnomalyVibration() {
+        // ... (kod wibracji pozostaje bez zmian)
     }
 }
