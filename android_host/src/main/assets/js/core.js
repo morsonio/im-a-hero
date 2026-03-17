@@ -4,8 +4,34 @@ const promptElement = document.getElementById('prompt');
 const choicesContainer = document.getElementById('choices');
 
 // Maszyna Stanów
-let systemState = 'LANGUAGE_SELECT';
-let currentLang = 'PL'; // Wymuszamy domyślnie polski dla testów
+let systemState = 'WARNING'; // Zmieniamy startowy stan na Ostrzeżenie
+let currentLang = 'PL';
+
+// Dynamiczne generowanie powitania (Skan Otoczenia)
+function generateSpookyBootMessage() {
+    let lux = 150; // Wartość domyślna dla testów na PC
+    let timeSpent = 120;
+
+    if (window.AndroidBridge) {
+        lux = window.AndroidBridge.getLuxLevel();
+        timeSpent = window.AndroidBridge.getTimeSpentSeconds();
+    }
+
+    let minuty = Math.floor(timeSpent / 60);
+    let sekundy = timeSpent % 60;
+    let czasTekst = minuty > 0 ? `${minuty} min i ${sekundy} sek` : `${sekundy} sekund`;
+
+    let lightContext = "";
+    if (lux < 10) {
+        lightContext = `Siedzisz w ciemnościach [${lux.toFixed(1)} Lux]. Idealne warunki dla Łupieżcy Umysłów.`;
+    } else if (lux < 100) {
+        lightContext = `Półmrok [${lux.toFixed(1)} Lux] nie ukryje Twojej pętli dopaminowej.`;
+    } else {
+        lightContext = `Ostre światło [${lux.toFixed(1)} Lux] razi w oczy, a Ty wciąż patrzysz w ten sam punkt.`;
+    }
+
+    return `[SKANOWANIE BIOMETRYCZNE...]\nZGODNOŚĆ POTWIERDZONA: OPERATOR 011.\n\nOSTRZEŻENIE: Przewijasz tę samą rolkę już od ${czasTekst}.\n${lightContext}\n\nOko z The Upside Down już na ciebie spogląda. Masz krótkie okno na ucieczkę.\nWpisz 'exit', by grzecznie wyłączyć aplikację, lub 'init', by wejść do Kuźni i stawić temu czoła.`;
+}
 
 // Dane zebrane z profilowania
 let profileData = {
@@ -89,19 +115,28 @@ window.submitChoice = function (value) {
 function processCommand(cmd) {
     const t = i18n[currentLang];
 
-    if (systemState === 'LANGUAGE_SELECT') {
-        systemState = 'BOOT';
-        appendOutput(t.boot, '#ff5555');
-        systemState = 'LOCKED';
-        return;
-    }
+    if (systemState === 'WARNING') {
+        if (cmd === 'exit') {
+            systemState = 'EJECTING'; // Blokujemy wpisywanie innych komend
+            appendOutput("Protokół ewakuacji zainicjowany.", '#55ff55');
+            appendOutput("Katapultowanie do bezpiecznej strefy za: 3...", '#ffaa00');
 
-    if (systemState === 'LOCKED') {
-        if (cmd === 'init') {
+            setTimeout(() => appendOutput("2...", '#ffaa00'), 1000);
+            setTimeout(() => appendOutput("1...", '#ffaa00'), 2000);
+            setTimeout(() => {
+                appendOutput("Zrzut!", '#ff0000');
+                if (window.AndroidBridge) {
+                    // Najpierw wyrzucamy pacjenta na pulpit telefonu
+                    window.AndroidBridge.forceHome();
+                    // Pół sekundy później zdejmujemy nasz czarny ekran
+                    setTimeout(() => window.AndroidBridge.closeTerminal(), 500);
+                }
+            }, 3000);
+
+        } else if (cmd === 'init') {
             systemState = 'PROFILING_ENERGY';
-            appendOutput(t.q1_text, '#55aaff');
+            appendOutput("--- ETAP 1: SKANOWANIE RDZENIA ---\nOkreśl aktualny poziom przeciążenia układu nerwowego (1-5):", '#55aaff');
 
-            // Wstrzykujemy interaktywny "suwak" tekstowy
             renderChoices(`
                 <div class="term-scale">
                     <div class="scale-tick" onclick="submitChoice('1')">1<br>❄️</div>
@@ -111,13 +146,11 @@ function processCommand(cmd) {
                     <div class="scale-tick" onclick="submitChoice('5')">5<br>🔥</div>
                 </div>
                 <div style="display:flex; justify-content:space-between; font-size:0.8rem;">
-                    <span>${t.q1_low}</span><span>${t.q1_high}</span>
+                    <span>[ZAMROŻENIE]</span><span>[FURIA]</span>
                 </div>
             `);
-        } else if (cmd === 'bypass') {
-            executeBypass();
         } else {
-            appendOutput("Nieznana komenda. Wpisz 'init'.", '#aaa');
+            appendOutput("Błędna komenda. Czas ucieka. Wpisz 'exit' lub 'init'.", '#aaa');
         }
         return;
     }
@@ -220,5 +253,6 @@ function executeBypass() {
 
 // Odpalenie od razu polskiego komunikatu startowego
 setTimeout(() => {
-    processCommand('start_pl_override'); // Wymusza wejście w tryb LOCKED
+    output.innerHTML = '';
+    appendOutput(generateSpookyBootMessage(), '#ff5555');
 }, 500);

@@ -164,7 +164,7 @@ body::after {
 .fatal-error {
     color: #ff0000 !important;
     text-shadow: 2px 0 #0000ff, -2px 0 #00ff00;
-    animation: fatal-glitch 0.1s linear infinite;
+    animation: fatal-glitch 0.3s linear infinite;
     font-weight: bold;
 }
 

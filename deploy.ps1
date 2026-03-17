@@ -1,5 +1,5 @@
-$package = "com.hero.im_a_hero.daemon"
-$service = "com.hero.im_a_hero.daemon.TelemetryService"
+$package = "com.im_a_hero.daemon"
+$service = "com.im_a_hero.daemon.TelemetryService"
 $apkPath = ".\android_host\build\outputs\apk\debug\HeroNodeZero-debug.apk"
 
 Write-Host "[1/4] Kompilacja (Gradle)..." -ForegroundColor Yellow

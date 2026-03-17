@@ -1,0 +1,51 @@
+=============================================================================
+                       MAPA MYŚLI: PROJEKT "WĘZEŁ ZERO"
+=============================================================================
+                                     |
+                                     |
+                      [ KORZEŃ PROJEKTU (im-a-hero) ]
+                      (C:\Users\eryks\Desktop\...)
+                                     |
+                                     |
+            -----------------------------------------------------
+            |                        |                          |
+            |                        |                          |
+[ DEPLOY.PS1 (Skrypt) ]    [ SENSOR_FUSION (Teren) ]    [ ANDROID_HOST (Aplikacja) ]
+(Brama wejściowa)          (Dane z telefonu)            (Mózg systemu - Kotlin)
+            |                        |                          |
+            |                        |                          |
+            |            ------------------------       -----------------
+            |            |           |          |       |               |
+            |        [ CZAS ]   [ SCROLLE ] [ ŚWIATŁO ] [ USŁUGA_DOT. ]  [ WINDOW_MGR. ]
+            |        (>30s)     (>10x)      (Luxy)      (Nasłuch w tle) (Rysowanie na ekranie)
+            |                               |                           |
+            |                               |                           |
+            ---------------------------------                           |
+            |                                                           |
+[ ADB (Komunikacja) ]                                                   |
+(Wstrzykiwanie, Uprawnienia)                                             |
+            |                                                           |
+            |                                                           |
+            -------------------------------------------------------------
+                                     |
+                                     |
+                       [ RCON_BRIDGE (Most JNI) ]
+                       (Interfejs JavaScript)
+                                     |
+                                     |
+                                     |
+                       [ CORE.JS (Maszyna Stanów) ]
+                       (Logika w Assets/index.html)
+                                     |
+                                     |
+            -----------------------------------------------------
+            |                        |                          |
+            |                        |                          |
+   [ PROTOKÓŁ: WARNING ]      [ PROTOKÓŁ: KALIBRACJA ]  [ PROTOKÓŁ: ODŁĄCZENIE ]
+   (Miękkie Lądowanie)         (Test Behawioralny)       (Bypass / Exit)
+            |                        |                          |
+            |                        |                          |
+    ------------------        ---------------          -----------------
+    |                |        |             |          |               |
+[ DANE_TEL. ]    [ OSINT ] [ SKALA ]    [ MMPI ]   [ BYPASS ]      [ EWAKUACJA ]
+(Czas, Ścieżka) (Jasność) (Energia)    (Kłamstwo) (Zasady/Haker)  (Odliczanie + Home)
